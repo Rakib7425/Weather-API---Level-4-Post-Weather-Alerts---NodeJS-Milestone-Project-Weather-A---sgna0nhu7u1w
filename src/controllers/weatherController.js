@@ -43,12 +43,35 @@ async function saveDataToDatabase(data) {
 */
 
 
-
+const data = JSON.parse(fs.readFileSync(`${__dirname}/../data/data.json`));
 // Level 4: Post Weather Alerts
-async function saveWeatherAlert(alertDetails) {
-   // TODO: Implement this function
-}
+async function saveWeatherAlert(body) {
+	// TODO: Implement this function
+	// Find the city data by city name
+	const { city, humidity, date } = body;
 
+	const cityName = body.city.toLowerCase();
+	const avlCity = data.find((item) => item.city.toLowerCase() === cityName);
+
+	if (!avlCity) {
+		return false;
+	} else {
+		const alert = {
+			city,
+			humidity,
+			date,
+			// date: new Date().toLocaleString(),
+		};
+
+		if (!avlCity.alerts) {
+			avlCity.alerts = [];
+		}
+		avlCity.alerts.push(alert);
+		await saveDataToDatabase(data);
+		return true;
+		// console.log(`Alert saved for ${cityName}: ${body.city}`);
+	}
+}
 module.exports = {
   saveWeatherAlert
 };
